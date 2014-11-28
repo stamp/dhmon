@@ -46,7 +46,7 @@ class MqBackend(object):
         })
     # Be nice to RabbitMQ, odd problems with larger chunks with wheezy
     if len(self._chunk) >= 10:
-      self._queue.append(json.dumps(self._chunk))
+      self._queue.append(json.dumps(self._chunk, encoding='latin1'))
       self._chunk = []
 
   def finish(self):
@@ -57,7 +57,7 @@ class MqBackend(object):
     if self._chunk:
       self.result_channel.basic_publish(
           exchange='dhmon:metrics', routing_key='', properties=self.properties,
-          body=json.dumps(self._chunk))
+          body=json.dumps(self._chunk, encoding='latin1'))
       self._chunk = []
     self._queue = []
 
